@@ -1,69 +1,62 @@
-import React from 'react';
-import { SymbolView } from 'expo-symbols';
-import { Link, Tabs } from 'expo-router';
-import { Platform, Pressable } from 'react-native';
-
-import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
-import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+import { useColorScheme } from "@/components/useColorScheme";
+import Colors from "@/constants/Colors";
+import { Tabs, useRouter } from "expo-router";
+import React from "react";
+import { Pressable, Text } from "react-native";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const router = useRouter();
+  const theme = useColorScheme() ?? "light";
+  const palette = Colors[theme];
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme].tint,
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
-        headerShown: useClientOnlyValue(false, true),
-      }}>
+        headerStyle: {
+          backgroundColor: theme === "dark" ? "#101319" : palette.background,
+        },
+        headerTitleStyle: {
+          color: palette.text,
+          fontWeight: "700",
+        },
+        headerTintColor: palette.text,
+        headerRight: () => (
+          <Pressable
+            onPress={() => router.push("/modal")}
+            style={{ marginRight: 16, paddingVertical: 6, paddingHorizontal: 10 }}
+          >
+            <Text style={{ fontWeight: "700", color: palette.text }}>
+              Settings
+            </Text>
+          </Pressable>
+        ),
+        tabBarStyle: {
+          backgroundColor: theme === "dark" ? "#101319" : palette.background,
+          borderTopColor: theme === "dark" ? "#232833" : "#d9d9d9",
+          height: 64,
+          paddingTop: 6,
+          paddingBottom: 8,
+        },
+        tabBarActiveTintColor: palette.tabIconSelected,
+        tabBarInactiveTintColor: palette.tabIconDefault,
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: "600",
+        },
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => (
-            <SymbolView
-              name={{
-                ios: 'chevron.left.forwardslash.chevron.right',
-                android: 'code',
-                web: 'code',
-              }}
-              tintColor={color}
-              size={28}
-            />
-          ),
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable style={{ marginRight: 15 }}>
-                {({ pressed }) => (
-                  <SymbolView
-                    name={{ ios: 'info.circle', android: 'info', web: 'info' }}
-                    size={25}
-                    tintColor={Colors[colorScheme].text}
-                    style={{ opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          title: "Library",
+          headerTitle: "Library",
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="setlists"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => (
-            <SymbolView
-              name={{
-                ios: 'chevron.left.forwardslash.chevron.right',
-                android: 'code',
-                web: 'code',
-              }}
-              tintColor={color}
-              size={28}
-            />
-          ),
+          title: "Setlists",
+          headerTitle: "Setlists",
         }}
       />
     </Tabs>
